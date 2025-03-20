@@ -1,0 +1,40 @@
+set shell := ["bash", "-cu"]
+set dotenv-load
+
+# Set the default recipe
+default: hello
+
+@hello:
+    echo "Hello, Welcome to Semantic Search over Visual Data"
+    
+# A recipe to build the project
+@setup:
+    echo "Building the requirements..."
+    just node
+    uv sync
+    echo "Requirements built successfully"
+
+# A recipe to run the project with logging
+@run:
+    echo "starting the project..."
+    uv sync
+    cd unified_logging && uv run start_logging_server.py &
+    sleep 2
+    cd model && uv run VLM.py &
+    echo "Waiting for VLM.py to start... Sleeping for 40 seconds"
+    sleep 40
+    cd searcher && uv run BM25.py &
+    echo "Waiting for BM25.py to start... Sleeping for 60 seconds"
+    sleep 60
+    cd bentoml/blip-service && uv run bentoml serve service.py &
+    sleep 60
+    echo "Waiting for bentoml_server.py to start... Sleeping for 60 seconds"
+    cd ui && npm install && npm run dev
+    echo "UI started successfully at http://localhost:5173/"
+
+@node:
+    curl -o- https://fnm.vercel.app/install | bash
+    fnm install 22
+    node -v
+    npm -v
+
