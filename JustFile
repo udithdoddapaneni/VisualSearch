@@ -35,6 +35,6 @@ default: hello
 @node:
     curl -o- https://fnm.vercel.app/install | bash
     fnm install 22
+    source ~/.bashrc
     node -v
     npm -v
-
