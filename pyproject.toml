@@ -17,6 +17,7 @@ dependencies = [
     "transformers>=4.49.0",
     "uvicorn>=0.34.0",
     "zmq>=0.0.0",
+    loguru>=0.7.3,
 ]
 
 [tool.uv.sources]
