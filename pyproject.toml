@@ -5,7 +5,9 @@ description = "Ahh may god help me"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "bentoml>=1.4.5",
     "fastapi[all]>=0.115.11",
+    "locust>=2.33.2",
     "moviepy>=1.0.3",
     "pillow>=11.1.0",
     "tantivy>=0.22.0",
