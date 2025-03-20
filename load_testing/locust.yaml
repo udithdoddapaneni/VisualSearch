@@ -1,0 +1,12 @@
+fastapi:
+  host: localhost
+  port: 8000
+
+bentoml:
+  host: localhost
+  port: 3000
+
+load_test:
+  users: 10000
+  spawn_rate: 50
+  run_time: "5m"
