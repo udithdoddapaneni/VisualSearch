@@ -67,13 +67,10 @@ def video_adder(add_fn: Callable, batch_size: int, model: Blip) -> None:
         images = []
         fnames = []
         tstamps = []
-        modified_times = []
         unique_captions = set()
         for filename in filenames:
             try:
                 path = Path(dirpath, filename)
-                modified_time = os.path.getmtime(path.as_posix())
-                modified_times.append(modified_time)
                 video = VideoFileClip(path.as_posix())
                 for t in np.arange(0, video.duration, INTERVAL):  # capture every 5 seconds
                     frame = video.get_frame(t)
@@ -93,13 +90,11 @@ def video_adder(add_fn: Callable, batch_size: int, model: Blip) -> None:
                             filenames=fnames,
                             types=["video"] * batch_size,
                             timestamps=tstamps,
-                            modified_times=modified_times
                         )
                         add_fn(docs)
                         images = []
                         fnames = []
                         tstamps = []
-                        modified_times = []
             except (Exception, BaseException):
                 continue
             video.close()
@@ -113,7 +108,6 @@ def video_adder(add_fn: Callable, batch_size: int, model: Blip) -> None:
                 filenames=fnames,
                 types=["video"] * len(batch_captions),
                 timestamps=tstamps,
-                modified_times=modified_times
             )
             add_fn(docs)
 
@@ -123,12 +117,9 @@ def image_adder(add_fn: Callable, batch_size: int, model: Blip) -> None:
     for dirpath, _dirnames, filenames in os.walk(IMAGES_PATH):
         images = []
         fnames = []
-        modified_times = []
         for filename in filenames:
             try:
                 path = Path(dirpath, filename)
-                modified_time = os.path.getmtime(path.as_posix())
-                modified_times.append(modified_time)
                 image = Image.open(path)
                 images.append(image)
                 fnames.append(filename)
@@ -139,12 +130,10 @@ def image_adder(add_fn: Callable, batch_size: int, model: Blip) -> None:
                         filenames=fnames,
                         types=["image"] * batch_size,
                         timestamps=[0] * len(batch_captions),
-                        modified_times=modified_times
                     )
                     add_fn(docs)
                     images = []
                     fnames=[]
-                    modified_times = []
             except (Exception, BaseException):
                 continue
         if len(images) > 0:
@@ -154,6 +143,5 @@ def image_adder(add_fn: Callable, batch_size: int, model: Blip) -> None:
                 filenames=fnames,
                 types=["image"] * len(batch_captions),
                 timestamps=[0] * len(batch_captions),
-                modified_times=modified_times
             )
             add_fn(docs)
