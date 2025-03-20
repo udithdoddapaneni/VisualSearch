@@ -1,8 +1,23 @@
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import Navbar from "./components/Navbar";
 
-const serverURL = "http://10.32.12.27:8000";
+const serverURL = "http://10.32.7.223:8000";
 const bentomlURL = "http://10.32.7.223:3000";
+const stopwords = [
+  "i",
+  "me",
+  "my",
+  "a",
+  "an",
+  "the",
+  "this",
+  "that",
+  "is",
+  "of",
+  "and",
+  "or",
+  "for",
+];
 
 // Lazy load the Video component
 const LazyVideo = lazy(() => import("./components/LazyVideo"));
@@ -22,7 +37,18 @@ function App() {
         // if strict search is enabled, then say for example "hot dog" is the searched then split
         // it by space and make the input as "hot AND dog" so that it will search for both hot and dog
         const words = search.split(" ");
-        searchWord = words.join(" AND ");
+        // remove stopwords
+        const filteredWords = words.filter(
+          (word) => !stopwords.includes(word.toLowerCase())
+        );
+
+        searchWord = filteredWords.join(" AND ");
+      } else {
+        // remove stopwords
+        searchWord = search
+          .split(" ")
+          .filter((word) => !stopwords.includes(word.toLowerCase()))
+          .join(" ");
       }
 
       const baseURL =
